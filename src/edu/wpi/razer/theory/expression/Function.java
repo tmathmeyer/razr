@@ -1,41 +1,101 @@
 package edu.wpi.razer.theory.expression;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import edu.wpi.razer.theory.correlation.Correlation;
+import edu.wpi.razer.theory.hash.HashTree;
+import edu.wpi.razer.theory.identifier.Identifier;
+
 public class Function implements Expression
 {
-	public String[] identifiers;
-	public String   name;
+	public String name;
+	public Map<String, Identifier> identifiers;
 	
 	//TODO: use something besides string ??
 	public Function(String n, String ... ids)
 	{
-		identifiers = ids;
+		identifiers = idsToMap(ids);
 		name = n;
+	}
+	
+	private Map<String, Identifier> idsToMap(String[] ids)
+	{
+		Identifier id = Identifier.makeInstance();
+		Map<String, Identifier> result = new HashMap<>();
+		for(String s : ids)
+		{
+			result.put(s, id);
+		}
+		return result;
 	}
 	
 	@Override
 	public String toString()
 	{
-		return name+"("+asArgString(identifiers)+")";
+		return name+"("+csv()+")";
+	}
+	
+	private Set<String> vals()
+	{
+		Set<String> result = new HashSet<String>();
+		for(Identifier i : identifiers.values())
+		{
+			result.add(i.toString());
+		}
+		return result;
+	}
+	
+	private String csv()
+	{
+		return String.join(",", vals());
+	}
+	
+	@Override
+	public Integer hash()
+	{
+		return 873 * (name.hashCode() + (5 * identifiers.size()));
 	}
 
-	private String asArgString(String[] universalQuantifiers2)
+	@Override
+	public HashTree<Correlation> register(HashTree<Correlation> lookup)
 	{
-		StringBuilder sb = new StringBuilder();
-		if (identifiers.length > 1)
+		Correlation c = lookup.lookup(this);
+		if (equals(c))
 		{
-			int i = 0;
-			sb.append(identifiers[i++]);
-			do
-			{
-				sb.append(',');
-				sb.append(identifiers[i++]);
-			}
-			while(i < identifiers.length);
+			return lookup;
 		}
-		if (identifiers.length == 1)
+		return lookup.add(this);
+	}
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		if (other == null)
 		{
-			sb.append(identifiers[0]);
+			return false;
 		}
-		return sb.toString();
+		if (other == this)
+		{
+			return true;
+		}
+		if (other instanceof Function)
+		{
+			return this.name.equals(((Function)other).name);
+		}
+		return false;
+	}
+
+	@Override
+	public Expression configure(String q, Identifier quantifier)
+	{
+		if (identifiers.get(q) != null)
+		{
+			identifiers.put(q, quantifier);
+		}
+		
+		return this;
 	}
 }
