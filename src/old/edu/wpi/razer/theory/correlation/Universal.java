@@ -1,8 +1,8 @@
 package old.edu.wpi.razer.theory.correlation;
 
-import edu.wpi.razer.theory.expression.Expression;
-import edu.wpi.razer.theory.hash.HashTree;
-import edu.wpi.razer.theory.identifier.Identifier;
+import old.edu.wpi.razer.theory.expression.Expression;
+import old.edu.wpi.razer.theory.hash.HashTree;
+import old.edu.wpi.razer.theory.identifier.Identifier;
 
 public class Universal implements Correlation
 {
@@ -37,6 +37,6 @@ public class Universal implements Correlation
 	@Override
 	public Correlation replace(String from, String to)
 	{
-		return new Universal()
+		return new Universal("", expression);
 	}
 }

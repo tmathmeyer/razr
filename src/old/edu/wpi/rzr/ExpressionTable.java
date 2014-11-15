@@ -1,10 +1,10 @@
-package edu.wpi.rzr;
+package old.edu.wpi.rzr;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.wpi.rzr.real.LookupExpression;
-import edu.wpi.rzr.types.Expression;
+import old.edu.wpi.rzr.real.LookupExpression;
+import old.edu.wpi.rzr.types.Expression;
 
 public class ExpressionTable
 {

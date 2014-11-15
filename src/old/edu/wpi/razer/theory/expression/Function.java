@@ -98,4 +98,10 @@ public class Function implements Expression
 		
 		return this;
 	}
+
+	@Override
+	public Correlation replace(String from, String to) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

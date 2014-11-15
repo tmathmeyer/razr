@@ -41,4 +41,10 @@ public class ImplicitaveExpression implements Expression
 	{
 		return new ImplicitaveExpression(from.configure(q, quantifier), to.configure(q, quantifier), operation);
 	}
+
+	@Override
+	public Correlation replace(String from, String to) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
