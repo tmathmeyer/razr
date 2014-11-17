@@ -19,8 +19,18 @@ public class Theory
 	}
 	
 	@Override
-	public String toString() {
-		return "Theory [formulae=" + formulae + ", seed=" + seed + "]";
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder("Theory:\n - formulae:\n");
+		for(Formula f : formulae)
+		{
+			sb.append("    ").append(f).append("\n");
+		}
+		sb.append(" - seed:\n    ").append(seed).append("\n\n");
+		
+		
+		
+		return sb.toString();
 	}
 
 	public Model chase() throws InterruptedException

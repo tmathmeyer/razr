@@ -12,7 +12,7 @@ public class Universal implements Formula
 	@Override
 	public String toString()
 	{
-		return "∀"+form.toString();
+		return "∀.("+form.toString()+")";
 	}
 
 	@Override
