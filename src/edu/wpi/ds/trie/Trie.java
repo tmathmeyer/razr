@@ -1,5 +1,7 @@
 package edu.wpi.ds.trie;
 
+import java.util.Set;
+
 /**
  * 
  * A data structure for storing overlapping lists of things
@@ -7,7 +9,9 @@ package edu.wpi.ds.trie;
  */
 public interface Trie<T>
 {
-	public Trie<T> index(T[] set);
+	public boolean index(T[] set);
 	
 	public boolean matches(T[] set);
+	
+	public Set<T[]> getAll();
 }

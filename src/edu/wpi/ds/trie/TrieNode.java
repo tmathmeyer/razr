@@ -11,17 +11,49 @@ public class TrieNode<T> implements Trie<T> {
 	private final Set<T[]> indexer = new HashSet<>();
 	
 	@Override
-	public Trie<T> index(T[] set)
+	public boolean index(T[] set)
 	{
+		boolean has = matches(set);
+		
 		indexer.add(set);
 		
-		return this;
+		return !has;
 	}
 
 	@Override
 	public boolean matches(T[] set)
 	{
-		return indexer.contains(set);
+		for(T[] tt : indexer)
+		{
+			if (eq(tt, set))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
+
+	private boolean eq(T[] tt, T[] set)
+    {
+	    if (tt.length != set.length)
+	    {
+	    	return false;
+	    }
+	    
+	    for(int i = 0; i < tt.length; i++)
+	    {
+	    	if (!tt[i].equals(set[i]))
+	    	{
+	    		return false;
+	    	}
+	    }
+	    return true;
+    }
+
+    @Override
+    public Set<T[]> getAll()
+    {
+		return indexer;
+    }
 	
 }

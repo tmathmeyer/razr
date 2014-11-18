@@ -1,6 +1,8 @@
 package edu.wpi.ds.env;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public interface Environment<K, V> extends Iterable<EnvironmentBinding<K, V>>
 {
@@ -15,7 +17,7 @@ public interface Environment<K, V> extends Iterable<EnvironmentBinding<K, V>>
 			name = s;
 			rest = r;
 			
-			size = r.size();
+			size = r==null?0:r.size();
 		}
 
 		@Override
@@ -41,6 +43,17 @@ public interface Environment<K, V> extends Iterable<EnvironmentBinding<K, V>>
 		{
 			return size;
 		}
+
+		@Override
+        public Map<K, V> asMap()
+        {
+	        if (rest == null)
+	        {
+	        	return new HashMap<>();
+	        }
+	        
+	        return rest.asMap();
+        }
 		
 	}
 	
@@ -82,6 +95,14 @@ public interface Environment<K, V> extends Iterable<EnvironmentBinding<K, V>>
 		{
 			return size;
 		}
+
+		@Override
+        public Map<K, V> asMap()
+        {
+	        Map<K, V> map = nameHolder.asMap();
+	        map.put(nameHolder.name, value);
+	        return map;
+        }
 	}
 	
 	static class Base<K, V> implements Environment<K, V>
@@ -124,6 +145,12 @@ public interface Environment<K, V> extends Iterable<EnvironmentBinding<K, V>>
 		{
 			return 0;
 		}
+
+		@Override
+        public Map<K, V> asMap()
+        {
+	        return new HashMap<>();
+        }
 		
 	}
 	
@@ -176,6 +203,8 @@ public interface Environment<K, V> extends Iterable<EnvironmentBinding<K, V>>
 	public Environment<K, V> with(K s);
 	
 	public Environment<K, V> as(V s);
+	
+	public Map<K, V> asMap();
 	
 	public int size();
 	
