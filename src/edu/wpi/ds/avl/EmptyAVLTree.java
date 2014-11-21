@@ -1,5 +1,7 @@
 package edu.wpi.ds.avl;
 
+import java.util.Iterator;
+
 public class EmptyAVLTree<E extends Comparable<E>> implements AVL<E>
 {
 	@Override
@@ -90,5 +92,31 @@ public class EmptyAVLTree<E extends Comparable<E>> implements AVL<E>
     public AVL<E> rotateLeft()
     {
 	    return this;
+    }
+
+	@Override
+    public Iterator<E> iterator()
+    {
+	    return new Iterator<E>(){
+
+			@Override
+            public boolean hasNext()
+            {
+	            return false;
+            }
+
+			@Override
+            public E next()
+            {
+	            throw new UnsupportedOperationException();
+            }
+	    	
+	    };
+    }
+
+	@Override
+    public E searchAndReturn(E e)
+    {
+	    return null;
     }
 }

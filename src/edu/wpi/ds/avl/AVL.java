@@ -1,6 +1,6 @@
 package edu.wpi.ds.avl;
 
-public interface AVL<E extends Comparable<E>>
+public interface AVL<E extends Comparable<E>> extends Iterable<E>
 {
 	/**
 	 * 
@@ -78,6 +78,13 @@ public interface AVL<E extends Comparable<E>>
 	 * @return the element
 	 */
 	E rightmost();
+	
+	/**
+	 * Used for finding models with a partial storage in the tree
+	 * @param e the possibly unfulfilled model
+	 * @return the whole model if it exists, or null otherwise
+	 */
+	E searchAndReturn(E e);
 
 	
 	

@@ -1,5 +1,7 @@
 package edu.wpi.ds.avl;
 
+import java.util.Iterator;
+
 public class AVLTree<E extends Comparable<E>> implements AVL<E>
 {
 	private final E node;
@@ -192,5 +194,49 @@ public class AVLTree<E extends Comparable<E>> implements AVL<E>
 		return new AVLTree<E>(getLeft().getNode(),
 	              new AVLTree<E>(getNode(), getRight(), getLeft().getRight()),
 	              getLeft().getLeft());
+    }
+
+	@Override
+    public Iterator<E> iterator()
+    {
+	    return new Iterator<E>(){
+	    	
+	    	Iterator<E> l = left.iterator();
+	    	Iterator<E> r = right.iterator();
+	    	boolean pos = true;
+	    	
+			@Override
+            public boolean hasNext()
+            {
+	            return l.hasNext() || pos || r.hasNext();
+            }
+
+			@Override
+            public E next()
+            {
+	            if (l.hasNext())
+	            {
+	            	return l.next();
+	            }
+            	if (pos)
+            	{
+            		pos = !pos;
+            		return node;
+            	}
+	            return r.next();
+            }
+	    	
+	    };
+    }
+
+	@Override
+    public E searchAndReturn(E e)
+    {
+	    int comp = e.compareTo(node);
+	    if (comp == 0)
+	    {
+	    	return node;
+	    }
+	    return (comp<0?left:right).searchAndReturn(e);
     }
 }

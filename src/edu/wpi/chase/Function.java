@@ -1,90 +1,63 @@
 package edu.wpi.chase;
 
-import edu.wpi.chase.model.Formula;
+import edu.wpi.ds.env.Environment;
+import edu.wpi.ds.pair.OrderedEntry;
 
-public class Function implements Formula
-{
+public class Function implements Formula {
+
+	private final String[] params;
 	private final String name;
-	private final String[] args;
 	
-	public int getParamCount()
-	{
-		return args.length;
-	}
-	
-	public Function(String n, String ... args)
+	public Function(String n, String ... p)
 	{
 		name = n;
-		this.args = args;
+		params = p;
 	}
 
 	@Override
-	public String toString()
+	public OrderedEntry<Boolean, Model> realize(Model model, Environment<String, Symbol> e)
 	{
-		return name+"("+String.join(",", args)+")";
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return 31 + ((name == null) ? 0 : name.hashCode());
-	}
-
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
+		Fact f = model.getFact(name);
+		
+		if (f == null)
 		{
-			return true;
+			f = new Fact(name, params);
+			model = model.addFact(f);
 		}
-		if (obj == null)
+		
+		f.setParams(params);
+		return f.realize(model, e);
+		
+	}
+
+	@Override
+    public boolean isRealized(Model model, Environment<String, Symbol> e)
+    {
+		Fact f = model.getFact(name);
+		
+		if (f == null)
 		{
 			return false;
 		}
-		if (getClass() != obj.getClass())
-		{
-			return false;
-		}
-		Function other = (Function) obj;
-		if (name == null)
-		{
-			if (other.name != null)
-			{
-				return false;
-			}
-		}
-		else if (!name.equals(other.name))
-		{
-			return false;
-		}
-		return true;
+		
+		f.setParams(params);
+		return f.isRealized(model, e);
+    }
+
+	public String getName()
+	{
+		return name;
 	}
 
 	@Override
-	public boolean forceSatisfaction(Model m, Symbol ... over)
-	{
-		boolean satisfied = true;
-		
-		for(Symbol s : over)
-		{
-			satisfied &= s.isTrueFor(this);
-			s.setTrueFor(this);
-		}
-		
-		return satisfied;
-	}
+    public String toString()
+    {
+	    return name+"("+String.join(",", params)+")";
+    }
 
 	@Override
-	public boolean doesSatisfy(Model m, Symbol... over)
-	{
-		boolean satisfied = true;
-		
-		for(Symbol s : over)
-		{
-			satisfied &= s.isTrueFor(this);
-		}
-		
-		return satisfied;
-	}
-	
+    public String toString(boolean verbose)
+    {
+	    return toString();
+    }
 }

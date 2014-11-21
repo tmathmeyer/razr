@@ -3,17 +3,28 @@ package edu.wpi.chase;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.wpi.ds.avl.AVL;
+import edu.wpi.ds.avl.EmptyAVLTree;
+import edu.wpi.ds.pair.OrderedEntry;
+
+//TODO: make class immutable
 public class Model
 {
-	private final Set<Symbol> symbols = new HashSet<>();
+	private final AVL<Fact> facts;
+	private final AVL<Symbol> symbols;
 	
-	public Symbol addNewSymbol(Function f)
+	public Model(AVL<Fact> f, AVL<Symbol> s)
 	{
-		Symbol s = Symbol.gensym().setTrueFor(f);
-		symbols.add(s);
-		return s;
+		facts = f;
+		symbols = s;
 	}
-
+	
+	public OrderedEntry<Symbol, Model> addNewSymbol()
+	{	
+		Symbol s = Symbol.gensym();
+		return new OrderedEntry<Symbol, Model>(s, new Model(facts, symbols.add(s)));
+	}
+	
 	@Override
 	public String toString()
 	{
@@ -24,80 +35,41 @@ public class Model
 			sb.append(s).append("\n");
 		}
 		
+		sb.append("\n");
+		
+		for(Fact s : facts)
+		{
+			sb.append(s).append("\n");
+		}
+		
 		return sb.toString();
+	}
+	
+	public Fact getFact(String s)
+	{
+		return facts.searchAndReturn(new Fact(s));
+	}
+	
+	public Model addFact(Fact f)
+	{
+		return new Model(facts.add(f), symbols);
 	}
 
 	public Set<Symbol> symbols()
-	{
-		return symbols;
-	}
+    {
+	    Set<Symbol> syms = new HashSet<>();
+	    
+	    for(Symbol s : symbols)
+	    {
+	    	syms.add(s);
+	    }
+	    
+	    return syms;
+    }
 	
-	public Set<Symbol[]> getArgs(int size)
-	{
-		while(symbols.size() < size)
-		{
-			symbols.add(Symbol.gensym());
-		}
-		Set<Symbol[]> result = new HashSet<>();
-		Set<Symbol[]> lastvals = getLastVals(size-1);
-		
-		for(Symbol s : symbols)
-		{
-			for(Symbol[] sa : lastvals)
-			{
-				Symbol[] sa2 = new Symbol[size];
-				for(int i = 0; i < size-1; i++)
-				{
-					sa2[i] = sa[i];
-				}
-				sa2[size-1] = s;
-				result.add(sa2);
-			}
-		}
-		
-		
-		return result;
-	}
-
-	private Set<Symbol[]> getLastVals(int i)
-	{
-		if (i == 0)
-		{
-			Set<Symbol[]> result = new HashSet<>();
-			Symbol[] a = new Symbol[0];
-			result.add(a);
-			return result;
-		}
-		if (i == 1)
-		{
-			Set<Symbol[]> result = new HashSet<>();
-			for(Symbol s : symbols)
-			{
-				Symbol[] a = {s};
-				result.add(a);
-			}
-			return result;
-		}
-		
-		return getArgs(i);
-	}
 	
-	public String argsAsStrings(int len)
+	public static Model emptyModel()
 	{
-		StringBuilder sb = new StringBuilder("{");
-		Set<Symbol[]> syms = getArgs(len);
-		for(Symbol[] ss : syms)
-		{
-			sb.append("[");
-			String[] sss = new String[ss.length];
-			for(int i=0; i<ss.length; i++)
-			{
-				sss[i] = ss[i].stringTwo();
-			}
-			sb.append(String.join(",", sss));
-			sb.append("]");
-		}
-		sb.append("}");
-		return sb.toString();
+		return new Model(new EmptyAVLTree<Fact>(), new EmptyAVLTree<Symbol>());
 	}
 }

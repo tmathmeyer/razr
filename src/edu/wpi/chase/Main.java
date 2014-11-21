@@ -1,55 +1,93 @@
 package edu.wpi.chase;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import edu.wpi.chase.model.Existential;
-import edu.wpi.chase.model.Formula;
-import edu.wpi.chase.model.Implies;
-import edu.wpi.chase.model.Universal;
-
 public class Main
 {
 	public static void main(String ... args)
 	{
-		Model m = new Model();
-		Set<Formula> theory = new HashSet<>();
+		t1();
+		t2();
+		birthday();
+	}
+	
+	
+	public static void t1()
+	{
+		Theory t = new Theory(true, new Existential("x", new Function("F", "x")));
 		
-		//Formula f = new Universal(new Function("F", "x"));
-		Formula f = new Existential("x", new Function("F", "x"));
-		Formula g = new Universal(new Implies(new Function("F", "x"), new Function("G", "x")));
-		Formula h = new Universal(new Implies(new Function("N", "x"), new Function("G", "x")));
-		Formula k = new Universal(new Implies(new Function("G", "x"), new Existential("y", new Function("F", "y"))));
+		t.addFormula(new Universal("x", new Implies(new Function("F", "x"), new Function("G", "x"))));
+		t.addFormula(new Universal("x", new Implies(new Function("F", "x"), new Existential("y", new Function("P", "y")))));
+		t.addFormula(new Universal("x", new Implies(new Function("F", "x"), new Existential("y", new Function("M", "y")))));
+
+		t.addFormula(new Universal("x", new Implies(new Function("F", "x"), new Existential("z", new Function("P", "z")))));
 		
+
+		t.addFormula(new Universal("x", new Implies(new Function("P", "x"), new And(new Function("Q", "x"), new Function("Z", "x")))));
+		t.addFormula(new Universal("x", new Implies(new Function("M", "x"), new And(new Function("Q", "x"), new Function("Z", "x")))));
+		t.addFormula(new Universal("x", new Implies(new Function("G", "x"), new Function("P", "x"))));
 		
-		//Formula x = new Universal(new Implies(new Function("X", "m", "n"), new Function("Y", "m", "n")));
-		Formula x = new Existential("m", new Function("X", "m", "n"));
+		System.out.println(t.chase());
+		System.out.println(t);
+	}
+	
+	public static void t2()
+	{
+		Theory t = new Theory(true, new Existential("y", new Existential("x", new Function("F", "x", "y"))));
 		
-		//System.out.println(f.forceSatisfaction(m));
-		//System.out.println(g.forceSatisfaction(m));
-		//System.out.println(h.forceSatisfaction(m));
-		//System.out.println(k.forceSatisfaction(m));
+		t.addFormula(new Universal("y", new Universal("x", new Implies(new Function("F", "x", "y"), new And(new Function("M", "x"), new Function("N", "y"))))));
+		t.addFormula(new Universal("y", new Universal("x", new Implies(new Function("F", "x", "y"), new Function("G", "x", "y")))));
 		
+		System.out.println(t.chase());
+		System.out.println(t);
+	}
+	
+	
+	
+	public static void birthday()
+	{
+		Theory t = new Theory(true, new Existential("y", new Existential("x", new Function("F", "x", "y"))));
 		
+		t.addFormula(new Universal("b", new Universal("n", new Implies(new Function("known", "b", "n"), new And(new Function("Book", "b"), new Function("Name", "n"))))));
 		
-		//theory.add(f);
+		//System.out.println(t.chase());
+		System.out.println(t);
 		
-		//System.out.println(x);
-		x.forceSatisfaction(m);
-		
-		
-		//System.out.println(m.argsAsStrings(3));
-		
-		
-		
-		
-		
-		
-		//System.out.println(f);
-		//System.out.println(g);
-		//System.out.println(h);
-		//System.out.println(k);
-		
-		System.out.println(m);
+		/*
+		    known(b, n) => Book(b) & Name(n)
+			date(b, n) = d => known(b, n) & Date(d)
+			
+			-- Add Birthday
+			addBirthday(b1, b2, n, d) => Book(b1) & Book(b2) & Name(n) & Date(d)
+			addBirthday(b1, b2, n, d) & date(b1, n_) = d_ => date(b2, n_) = d_
+			
+			addBirthday(b1, b2, n, d) => date(b2, n) = d
+			
+			-- Delete Birthday
+			delBirthday(b1, b2, n) => Book(b1) & Book(b2) & Name(n)
+			delBirthday(b1, b2, n) & date(b2, n_) = d_ => date(b1, n_) = d_
+			
+			-- Find Birthday
+			findBirthday(b, n) = d => date(b, n) = d
+			date(b, n) = d => findBirthday(b, n) = d
+			
+			-- Remind
+			remind(b, d, n) => Book(b) & Date(d) & Name(n)
+			remind(b, d, n) => date(b, n) = d
+			date(b, n) = d => remind(b, d, n)
+			
+			-- Init Book
+			initBook(b) & known(b, n) => Falsehood
+			
+			-- ? ADD WORKS
+			-- addBirthday(book1(), book2(), name1(), date1()) 
+			-- findBirthday(book2(), name1()) = date1() => Falsehood
+			
+			-- ? DEL IS UNDO
+			-- findBirthday(Book1(), Name1()) = Date1()
+			-- Date1() = findBirthday(Book3(), Name1()) => Falsehood
+			
+			-- ? BUSY DAY
+			-- busyDay(b, d) => exists m. exists n. remind(b, d, n) & remind(b, d, m)
+			-- busyDay(Book1(), Today())
+		 */
 	}
 }
