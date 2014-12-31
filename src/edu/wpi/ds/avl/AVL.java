@@ -86,7 +86,7 @@ public interface AVL<E extends Comparable<E>> extends Iterable<E>
 	 */
 	E searchAndReturn(E e);
 
-	
+	int size();
 	
 	
 	

@@ -5,8 +5,9 @@ public class Main
 	public static void main(String ... args)
 	{
 		t1();
+		System.out.println("\n\n\n\n\n\n\n\n");
 		t2();
-		birthday();
+		//birthday();
 	}
 	
 	
@@ -25,8 +26,8 @@ public class Main
 		t.addFormula(new Universal("x", new Implies(new Function("M", "x"), new And(new Function("Q", "x"), new Function("Z", "x")))));
 		t.addFormula(new Universal("x", new Implies(new Function("G", "x"), new Function("P", "x"))));
 		
-		System.out.println(t.chase());
 		System.out.println(t);
+		System.out.println(t.chase());
 	}
 	
 	public static void t2()
@@ -34,10 +35,11 @@ public class Main
 		Theory t = new Theory(true, new Existential("y", new Existential("x", new Function("F", "x", "y"))));
 		
 		t.addFormula(new Universal("y", new Universal("x", new Implies(new Function("F", "x", "y"), new And(new Function("M", "x"), new Function("N", "y"))))));
-		t.addFormula(new Universal("y", new Universal("x", new Implies(new Function("F", "x", "y"), new Function("G", "x", "y")))));
+		t.addFormula(new Universal("y", new Universal("x", new Implies(new Function("F", "x", "y"), new Function("G", "y", "x")))));
 		
-		System.out.println(t.chase());
+
 		System.out.println(t);
+		System.out.println(t.chase());
 	}
 	
 	

@@ -1,7 +1,5 @@
 package edu.wpi.ds;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 import edu.wpi.ds.avl.AVL;

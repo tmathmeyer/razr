@@ -11,6 +11,9 @@ public class AVLTree<E extends Comparable<E>> implements AVL<E>
 	private final int balance;
 	private final int depth;
 
+	private final int size;
+	
+	
 	@Override
     public String toString()
     {
@@ -29,6 +32,8 @@ public class AVLTree<E extends Comparable<E>> implements AVL<E>
 		depth = Math.max(ll, rr) + 1;
 		
 		balance = ll - rr;
+		
+		size = 1 + l.size() + r.size();
 	}
 	
 	public AVLTree(E i)
@@ -45,11 +50,17 @@ public class AVLTree<E extends Comparable<E>> implements AVL<E>
 	@Override
 	public AVL<E> add(E i)
 	{
-		if (i.compareTo(getNode()) > 0)
+		int v = i.compareTo(getNode());
+		if (v > 0)
 		{
-			return new AVLTree<E>(node, left, right.add(i)).balance();
+			return new AVLTree<E>(node, left, right.add(i));//.balance();
 		}
-		return new AVLTree<E>(node, left.add(i), right).balance();
+		else if (v < 0)
+		{
+			return new AVLTree<E>(node, left.add(i), right);//.balance();
+		}
+		
+		return this;//.balance();
 	}
 
 	@Override
@@ -76,7 +87,7 @@ public class AVLTree<E extends Comparable<E>> implements AVL<E>
 			
 			E lrr = getLeft().rightmost();
 			
-			return new AVLTree<>(lrr, left.remove(lrr), right).balance();
+			return new AVLTree<>(lrr, left.remove(lrr), right);//.balance();
 			
 		}
 		else if(compare > 0)
@@ -238,5 +249,53 @@ public class AVLTree<E extends Comparable<E>> implements AVL<E>
 	    	return node;
 	    }
 	    return (comp<0?left:right).searchAndReturn(e);
+    }
+
+	@Override
+    public int size()
+    {
+	    return size;
+    }
+
+	@Override
+    public int hashCode()
+    {
+	    final int prime = 31;
+	    int result = 1;
+	    result = prime * result + ((left == null) ? 0 : left.hashCode());
+	    result = prime * result + ((node == null) ? 0 : node.hashCode());
+	    result = prime * result + ((right == null) ? 0 : right.hashCode());
+	    return result;
+    }
+
+	@Override
+    public boolean equals(Object obj)
+    {
+	    if (this == obj)
+		    return true;
+	    if (obj == null)
+		    return false;
+	    if (getClass() != obj.getClass())
+		    return false;
+	    AVLTree<?> other = (AVLTree<?>) obj;
+	    if (left == null)
+	    {
+		    if (other.left != null)
+			    return false;
+	    } else if (!left.equals(other.left))
+		    return false;
+	    if (node == null)
+	    {
+		    if (other.node != null)
+			    return false;
+	    } else if (!node.equals(other.node))
+		    return false;
+	    if (right == null)
+	    {
+		    if (other.right != null)
+			    return false;
+	    } else if (!right.equals(other.right))
+		    return false;
+	    return true;
     }
 }

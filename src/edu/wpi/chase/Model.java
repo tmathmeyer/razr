@@ -1,8 +1,5 @@
 package edu.wpi.chase;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import edu.wpi.ds.avl.AVL;
 import edu.wpi.ds.avl.EmptyAVLTree;
 import edu.wpi.ds.pair.OrderedEntry;
@@ -55,16 +52,14 @@ public class Model
 		return new Model(facts.add(f), symbols);
 	}
 
-	public Set<Symbol> symbols()
+	public AVL<Symbol> symbols()
     {
-	    Set<Symbol> syms = new HashSet<>();
-	    
-	    for(Symbol s : symbols)
-	    {
-	    	syms.add(s);
-	    }
-	    
-	    return syms;
+	    return symbols;
+    }
+	
+	public AVL<Fact> facts()
+    {
+	    return facts;
     }
 	
 	

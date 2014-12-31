@@ -1,17 +1,22 @@
 package edu.wpi.chase;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import edu.wpi.ds.avl.AVL;
+import edu.wpi.ds.avl.EmptyAVLTree;
 import edu.wpi.ds.env.Environment;
 import edu.wpi.ds.pair.OrderedEntry;
-import edu.wpi.ds.trie.Trie;
-import edu.wpi.ds.trie.TrieNode;
 
 public class Fact implements Formula, Comparable<Fact>
 {
 	// this data structure is stupid, and needs to be replaced
-	private final Trie<Symbol> trie = new TrieNode<>();
+	//private final Trie<Symbol> trie = new TrieNode<>();
+	
+	//private AVL<Group<Formula, AVL<Symbol>>> statements;
+	private Map<AVL<Symbol>, Formula> statements = new HashMap<>();
+	
 	
 	private final int paramsLength;
 	private final String name;
@@ -33,6 +38,7 @@ public class Fact implements Formula, Comparable<Fact>
 		paramsLength = p.length;
 	}
 
+	//TODO: make correct such that multiple theories can be added
 	@Override
 	public OrderedEntry<Boolean, Model> realize(Model model, Environment<String, Symbol> e)
 	{	
@@ -41,37 +47,39 @@ public class Fact implements Formula, Comparable<Fact>
 			return new OrderedEntry<Boolean, Model>(false, model);
 		}
 		
-		Symbol[] syms = new Symbol[paramsLength];
+		AVL<Symbol> syms = new EmptyAVLTree<>();
 		Map<String, Symbol> map = e.asMap();
 	    
-	    for(int i = 0; i < syms.length; i++)
+	    for(int i = 0; i < paramsLength; i++)
 	    {
-	    	syms[i] = map.get(params[i]);
-	    	if (syms[i] == null)
-	    	{
-	    		throw new RuntimeException("fuck");
-	    	}
-	    }
-	    
-	    return new OrderedEntry<Boolean, Model>(trie.index(syms), model);
-	}
-
-	@Override
-    public boolean isRealized(Model model, Environment<String, Symbol> e)
-    {	
-		Symbol[] syms = new Symbol[paramsLength];
-		Map<String, Symbol> map = e.asMap();
-	    
-	    for(int i = 0; i < syms.length; i++)
-	    {
-	    	syms[i] = map.get(params[i]);
-	    	if (syms[i] == null)
+	    	Symbol sym = map.get(params[i]);
+	    	syms = syms.add(sym);
+	    	if (sym == null)
 	    	{
 	    		throw new RuntimeException(name + "   " + String.join(",", params)+"   "+e.asMap());
 	    	}
 	    }
 	    
-	    return trie.matches(syms);
+	    return new OrderedEntry<Boolean, Model>(statements.put(syms, null)==null, model);
+	}
+
+	@Override
+    public boolean isRealized(Model model, Environment<String, Symbol> e)
+    {	
+		AVL<Symbol> syms = new EmptyAVLTree<>();
+		Map<String, Symbol> map = e.asMap();
+	    
+	    for(int i = 0; i < paramsLength; i++)
+	    {
+	    	Symbol sym = map.get(params[i]);
+	    	syms = syms.add(sym);
+	    	if (sym == null)
+	    	{
+	    		throw new RuntimeException(name + "   " + String.join(",", params)+"   "+e.asMap());
+	    	}
+	    }
+	    
+	    return statements.containsKey(syms);
     }
 
 	public String getName()
@@ -82,21 +90,26 @@ public class Fact implements Formula, Comparable<Fact>
 	@Override
     public String toString()
     {
-		Set<Symbol[]> syms = trie.getAll();
+		Set<AVL<Symbol>> syms = statements.keySet();
 		String[] jj = new String[syms.size()];
 		
 		int i = 0;
-		for(Symbol[] sa : syms)
+		for(AVL<Symbol> sa : syms)
 		{
 			jj[i++] = name+"("+String.join(",", asString(sa))+")";
+		}
+		
+		if (jj.length == 0)
+		{
+			return name;
 		}
 		
 	    return "["+String.join(" :: ", jj)+"]";
     }
 
-	private String[] asString(Symbol[] sa)
+	private String[] asString(AVL<Symbol> sa)
     {
-		String[] result = new String[sa.length];
+		String[] result = new String[sa.size()];
 		int i = 0;
 		for(Symbol s : sa)
 		{

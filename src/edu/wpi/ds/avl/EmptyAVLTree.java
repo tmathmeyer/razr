@@ -119,4 +119,27 @@ public class EmptyAVLTree<E extends Comparable<E>> implements AVL<E>
     {
 	    return null;
     }
+
+	@Override
+    public int size()
+    {
+	    return 0;
+    }
+	
+	@Override
+	public int hashCode()
+	{
+		return 712831293;
+	}
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		if (other == null)
+		{
+			return false;
+		}
+		
+		return other instanceof EmptyAVLTree<?>;
+	}
 }
